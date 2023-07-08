@@ -596,62 +596,62 @@ protected:
     int offset = 0;
     // check the SOI marker
     if (data_[offset++] != 0xFF || data_[offset++] != 0xD8) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOI marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOI marker\n"));
       return;
     }
     // check the JFIF APP0 marker
     if (memcmp(data_.data() + offset, JFIF_APP0_DATA, sizeof(JFIF_APP0_DATA)) != 0) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid JFIF APP0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid JFIF APP0 marker\n"));
       return;
     }
     offset += sizeof(JFIF_APP0_DATA);
     // check the DQT marker for luminance
     if (data_[offset++] != 0xFF || data_[offset++] != 0xDB) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
       return;
     }
     if (data_[offset++] != 0x00 || data_[offset++] != 0x43) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
       return;
     }
     if (data_[offset++] != 0x00) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
       return;
     }
     q0_table_ = std::string_view(data_.data() + offset, 64);
     offset += 64;
     // check the DQT marker for chrominance
     if (data_[offset++] != 0xFF || data_[offset++] != 0xDB) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
       return;
     }
     if (data_[offset++] != 0x00 || data_[offset++] != 0x43) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
       return;
     }
     if (data_[offset++] != 0x01) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid DQT marker\n"));
       return;
     }
     q1_table_ = std::string_view(data_.data() + offset, 64);
     offset += 64;
     // check huffman tables
     if (data_[offset++] != 0xFF || data_[offset++] != 0xC4) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid huffman tables marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid huffman tables marker\n"));
       return;
     }
     if (data_[offset++] != 0x00 || data_[offset++] != 0x1f || data_[offset++] != 0x00) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid huffman tables marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid huffman tables marker\n"));
       return;
     }
     offset += sizeof(HUFFMAN_TABLES) - 5;
     // check the SOF0 marker
     if (data_[offset++] != 0xFF || data_[offset++] != 0xC0) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x00 || data_[offset++] != 0x11) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     // skip the precision
@@ -662,92 +662,92 @@ protected:
     width_ = (data_[offset] << 8) | data_[offset + 1];
     offset += 2;
     if (data_[offset++] != 0x03) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x01) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x21) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x00) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x02) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x11) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x01) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x03) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x11) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     if (data_[offset++] != 0x01) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOF0 marker\n"));
       return;
     }
     // check the SOS marker
     if (data_[offset++] != 0xFF || data_[offset++] != 0xDA) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x00 || data_[offset++] != 0x0C) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x03) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x01) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x00) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x02) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x11) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x03) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x11) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x00) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x3F) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     if (data_[offset++] != 0x00) {
-      UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
+      // UE_LOG(LogTemp, Error, TEXT("Invalid SOS marker\n"));
       return;
     }
     data_.resize(offset);
