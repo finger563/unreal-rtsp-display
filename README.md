@@ -4,9 +4,11 @@ and displaying them in real time.
 
 https://github.com/finger563/unreal-rtsp-display/assets/213467/05942919-d097-4142-9010-33f8de1883c2
 
-When running this example, you will need to configure the address, port, and 
+When running this example, you will need to configure the address, port, and
 path of your RTSP server on the actor:
-![CleanShot 2023-07-08 at 10 52 16@2x](https://github.com/finger563/unreal-rtsp-display/assets/213467/6cf9ff23-65af-47e6-8260-601499a0ef68)
+
+![CleanShot 2023-07-08 at 10 52
+16@2x](https://github.com/finger563/unreal-rtsp-display/assets/213467/6cf9ff23-65af-47e6-8260-601499a0ef68)
 
 Note: this example currently only supports MJPEG streams over RTSP, which are
 parsed with the RtpJpegPacket class into JpegFrames. This example uses Unreal
