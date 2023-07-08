@@ -4,6 +4,10 @@ and displaying them in real time.
 
 https://github.com/finger563/unreal-rtsp-display/assets/213467/05942919-d097-4142-9010-33f8de1883c2
 
+When running this example, you will need to configure the address, port, and 
+path of your RTSP server on the actor:
+![CleanShot 2023-07-08 at 10 52 16@2x](https://github.com/finger563/unreal-rtsp-display/assets/213467/6cf9ff23-65af-47e6-8260-601499a0ef68)
+
 Note: this example currently only supports MJPEG streams over RTSP, which are
 parsed with the RtpJpegPacket class into JpegFrames. This example uses Unreal
 Engine's built-in image decoding to decode the jpeg frames into uncompressed
@@ -48,3 +52,13 @@ Image of the running example in the editor:
 
 Image showing the RTSP configuration parameters on the RtspDisplay blueprint actor:
 <img width="1723" alt="CleanShot 2023-07-08 at 10 38 20@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/7315797f-4fb3-4af4-9d50-0ffbdee99de2">
+
+### Details
+
+RtspDisplay actor blueprint:
+<img width="914" alt="CleanShot 2023-07-08 at 10 49 45@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/ded25e0e-a05a-4c32-a547-aa5455a982c6">
+<img width="1124" alt="CleanShot 2023-07-08 at 10 50 28@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/cfdbea49-971d-4ddd-84af-b28e0d09e3a5">
+<img width="1530" alt="CleanShot 2023-07-08 at 10 51 26@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/d252003d-6533-4de3-b045-e030644470d9">
+
+M_Display material:
+<img width="1242" alt="CleanShot 2023-07-08 at 10 51 50@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/656a5447-39db-4fcc-bb16-92a839dc4e41">
