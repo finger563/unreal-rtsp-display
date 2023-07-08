@@ -2,6 +2,8 @@
 Example code for receiving video streams over RTSP using Unreal Engine FSockets
 and displaying them in real time.
 
+https://github.com/finger563/unreal-rtsp-display/assets/213467/05942919-d097-4142-9010-33f8de1883c2
+
 Note: this example currently only supports MJPEG streams over RTSP, which are
 parsed with the RtpJpegPacket class into JpegFrames. This example uses Unreal
 Engine's built-in image decoding to decode the jpeg frames into uncompressed
@@ -40,3 +42,9 @@ This example contains a few components:
    from the RTSP server. It binds an event to the OnFrameReceived event from the
    RtspClientComponent and when it receives a message from that event, it sets
    the new texture to be the dynamic material instance's texture parameter.
+
+Image of the running example in the editor:
+<img width="1725" alt="CleanShot 2023-07-08 at 10 37 49@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/74a2898c-718e-422e-87f3-79f995188df8">
+
+Image showing the RTSP configuration parameters on the RtspDisplay blueprint actor:
+<img width="1723" alt="CleanShot 2023-07-08 at 10 38 20@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/7315797f-4fb3-4af4-9d50-0ffbdee99de2">
