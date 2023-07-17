@@ -61,9 +61,10 @@ Image showing the RTSP configuration parameters on the RtspDisplay blueprint act
 
 #### RtspDisplay Actor Blueprint
 
-<img width="914" alt="CleanShot 2023-07-08 at 10 49 45@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/ded25e0e-a05a-4c32-a547-aa5455a982c6">
+![Event Graph](https://github.com/finger563/unreal-rtsp-display/assets/213467/98bf260f-38a5-4bc3-86e8-a43083ee8e93)
 <img width="1124" alt="CleanShot 2023-07-08 at 10 50 28@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/cfdbea49-971d-4ddd-84af-b28e0d09e3a5">
-<img width="1530" alt="CleanShot 2023-07-08 at 10 51 26@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/d252003d-6533-4de3-b045-e030644470d9">
+![RtspDisplay::Connect](https://github.com/finger563/unreal-rtsp-display/assets/213467/561da1ba-39c8-4b65-a964-ef5668494ec2)
+
 
 #### M_Display Material
 
