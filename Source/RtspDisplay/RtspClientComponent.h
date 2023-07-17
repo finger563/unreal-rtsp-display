@@ -18,6 +18,10 @@ class FSocket;
 class UTexture2D;
 
 // Blueprints can bind to this to update the UI
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConnected);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDisconnected);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlay);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPause);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFrameReceived, UTexture2D*, Texture);
 
 /**
@@ -64,6 +68,18 @@ public:
   bool teardown();
 
   UPROPERTY(BlueprintAssignable, Category = "RTSP")
+  FOnConnected OnConnected;
+
+  UPROPERTY(BlueprintAssignable, Category = "RTSP")
+  FOnDisconnected OnDisconnected;
+
+  UPROPERTY(BlueprintAssignable, Category = "RTSP")
+  FOnPause OnPause;
+
+  UPROPERTY(BlueprintAssignable, Category = "RTSP")
+  FOnPlay OnPlay;
+
+  UPROPERTY(BlueprintAssignable, Category = "RTSP")
   FOnFrameReceived OnFrameReceived;
 
   UPROPERTY(BlueprintReadOnly, Category = "RTSP")
@@ -92,9 +108,11 @@ public:
 
   void init_rtcp(size_t rtcp_port);
 
-  void rtp_thread_func();
+  bool connect_thread_func();
 
-  void rtcp_thread_func();
+  bool rtp_thread_func();
+
+  bool rtcp_thread_func();
 
   void handle_rtp_packet(std::vector<uint8_t> &data);
 
@@ -104,6 +122,7 @@ public:
   FSocket *rtp_socket_ = nullptr;
   FSocket *rtcp_socket_ = nullptr;
 
+  FMyRunnable *connect_thread_ = nullptr;
   FMyRunnable *rtp_thread_ = nullptr;
   FMyRunnable *rtcp_thread_ = nullptr;
 

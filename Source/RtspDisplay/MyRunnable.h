@@ -8,7 +8,7 @@
 class FMyRunnable : public FRunnable
 {
 public:
-  typedef std::function<void(void)> callback_t;
+  typedef std::function<bool(void)> callback_t;
 
   FMyRunnable(callback_t callback);
 

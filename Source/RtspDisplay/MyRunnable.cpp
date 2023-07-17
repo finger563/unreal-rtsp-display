@@ -52,7 +52,9 @@ uint32 FMyRunnable::Run()
     if (Callback == nullptr)
       break;
 
-    Callback();
+    bool ShouldStop = Callback();
+    if (ShouldStop)
+      break;
   }
 
   return 0;
