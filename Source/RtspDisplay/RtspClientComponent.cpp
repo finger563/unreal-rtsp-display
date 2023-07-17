@@ -147,36 +147,21 @@ bool URtspClientComponent::connect(FString address, int port, FString path) {
   rtsp_addr_->SetIp(ip.Value);
   rtsp_addr_->SetPort(port);
 
-  // now connect
-  if (!rtsp_socket_->Connect(*rtsp_addr_)) {
-    UE_LOG(LogTemp, Error, TEXT("Failed to connect to RTSP server"));
-    return false;
-  }
+  // make a thread to receive rtp packets using the rtp_socket
+  connect_thread_ = new FMyRunnable(std::bind(&URtspClientComponent::connect_thread_func, this));
 
-  auto conn_state = rtsp_socket_->GetConnectionState();
-  switch (conn_state) {
-    case ESocketConnectionState::SCS_NotConnected:
-      UE_LOG(LogTemp, Error, TEXT("RTSP socket not connected"));
-      return false;
-    case ESocketConnectionState::SCS_Connected:
-      UE_LOG(LogTemp, Log, TEXT("RTSP socket connected"));
-      break;
-    case ESocketConnectionState::SCS_ConnectionError:
-      UE_LOG(LogTemp, Error, TEXT("RTSP socket connection error"));
-      return false;
-  }
-
-  // update the state
-  IsConnected = true;
-
-  // send the OPTIONS request
-  std::error_code ec;
-  send_request("OPTIONS", "*", {}, ec);
-  return !ec;
+  return true;
 }
 
 void URtspClientComponent::disconnect() {
   UE_LOG(LogTemp, Log, TEXT("Disconnecting from RTSP server"));
+  // make sure we stop the connect thread if it's still runnning (and didn't
+  // connect)
+  if (connect_thread_) {
+    connect_thread_->Stop();
+    delete connect_thread_;
+    connect_thread_ = nullptr;
+  }
   // try to send the teardown request, but don't care if it fails
   teardown();
   IsConnected = false;
@@ -208,9 +193,15 @@ void URtspClientComponent::disconnect() {
     rtcp_socket_->Close();
     delete rtcp_socket_;
   }
+  // Broadcast to the listeners
+  OnDisconnected.Broadcast();
 }
 
 bool URtspClientComponent::describe() {
+  if (!IsConnected) {
+    UE_LOG(LogTemp, Error, TEXT("Cannot describe: not connected"));
+    return false;
+  }
   std::error_code ec;
   // send the describe request
   auto response = send_request("DESCRIBE", path_, {}, ec);
@@ -257,6 +248,10 @@ bool URtspClientComponent::describe() {
 }
 
 bool URtspClientComponent::setup(int rtp_port, int rtcp_port) {
+  if (!IsConnected) {
+    UE_LOG(LogTemp, Error, TEXT("Cannot setup: not connected"));
+    return false;
+  }
   UE_LOG(LogTemp, Log, TEXT("Setting up RTSP session on ports %d-%d"), rtp_port, rtcp_port);
   std::error_code ec;
   // send the setup request
@@ -275,24 +270,42 @@ bool URtspClientComponent::setup(int rtp_port, int rtcp_port) {
 }
 
 bool URtspClientComponent::play() {
+  if (!IsConnected) {
+    UE_LOG(LogTemp, Error, TEXT("Cannot play: not connected"));
+    return false;
+  }
   UE_LOG(LogTemp, Log, TEXT("Playing RTSP session"));
   std::error_code ec;
   // send the play request
   auto response = send_request("PLAY", path_, {}, ec);
   IsPlaying = ec ? false : true;
+  if (IsPlaying) {
+    OnPlay.Broadcast();
+  }
   return !ec;
 }
 
 bool URtspClientComponent::pause() {
+  if (!IsConnected) {
+    UE_LOG(LogTemp, Error, TEXT("Cannot pause: not connected"));
+    return false;
+  }
   UE_LOG(LogTemp, Log, TEXT("Pausing RTSP session"));
   std::error_code ec;
   // send the pause request
   auto response = send_request("PAUSE", path_, {}, ec);
   IsPlaying = ec ? true : false;
+  if (!IsPlaying) {
+    OnPause.Broadcast();
+  }
   return !ec;
 }
 
 bool URtspClientComponent::teardown() {
+  if (!IsConnected) {
+    UE_LOG(LogTemp, Error, TEXT("Cannot teardown: not connected"));
+    return false;
+  }
   UE_LOG(LogTemp, Log, TEXT("Tearing down RTSP session"));
   std::error_code ec;
   // send the teardown request
@@ -357,17 +370,57 @@ void URtspClientComponent::init_rtcp(size_t rtcp_port) {
   }
   FString socket_name = FString::Printf(TEXT("RTCP Socket %d"), rtcp_port);
   rtcp_socket_ = FUdpSocketBuilder(*socket_name)
-                     .AsReusable()
-                     .BoundToPort(rtcp_port)
-                     .WithReceiveBufferSize(6 * 1024)
-                     .WithSendBufferSize(6 * 1024)
-                     .Build();
+    .AsReusable()
+    .BoundToPort(rtcp_port)
+    .WithReceiveBufferSize(6 * 1024)
+    .WithSendBufferSize(6 * 1024)
+    .Build();
   UE_LOG(LogTemp, Log, TEXT("RTCP port: %d"), rtcp_port);
   // make a thread to receive rtcp packets using the rtcp_socket
   rtcp_thread_ = new FMyRunnable(std::bind(&URtspClientComponent::rtcp_thread_func, this));
 }
 
-void URtspClientComponent::rtp_thread_func() {
+bool URtspClientComponent::connect_thread_func() {
+  // now connect
+  if (!rtsp_socket_->Connect(*rtsp_addr_)) {
+    UE_LOG(LogTemp, Error, TEXT("Failed to connect to RTSP server"));
+    // go ahead and stop the thread early
+    return true;
+  }
+
+  auto conn_state = rtsp_socket_->GetConnectionState();
+  switch (conn_state) {
+  case ESocketConnectionState::SCS_NotConnected:
+    UE_LOG(LogTemp, Error, TEXT("RTSP socket not connected"));
+    // go ahead and stop the thread early
+    return true;
+  case ESocketConnectionState::SCS_Connected:
+    UE_LOG(LogTemp, Log, TEXT("RTSP socket connected"));
+    break;
+  case ESocketConnectionState::SCS_ConnectionError:
+    UE_LOG(LogTemp, Error, TEXT("RTSP socket connection error"));
+    // go ahead and stop the thread early
+    return true;
+  }
+
+  // update the state
+  IsConnected = true;
+
+  // notify the listeners
+  OnConnected.Broadcast();
+
+  // send the OPTIONS request
+  std::error_code ec;
+  send_request("OPTIONS", "*", {}, ec);
+  if (ec) {
+    UE_LOG(LogTemp, Error, TEXT("Failed to send OPTIONS request"));
+  }
+
+  // we're done, so stop the thread
+  return true;
+}
+
+bool URtspClientComponent::rtp_thread_func() {
   // receive the rtp packet
   size_t max_packet_size = 65536;
   uint8_t *data = new uint8_t[max_packet_size];
@@ -381,9 +434,12 @@ void URtspClientComponent::rtp_thread_func() {
 
   // Sleep the thread for a bit
   FPlatformProcess::Sleep(0.005f);
+
+  // don't want to stop the thread
+  return false;
 }
 
-void URtspClientComponent::rtcp_thread_func() {
+bool URtspClientComponent::rtcp_thread_func() {
   // receive the rtcp packet
   size_t max_packet_size = 65536;
   uint8_t *data = new uint8_t[max_packet_size];
@@ -397,6 +453,9 @@ void URtspClientComponent::rtcp_thread_func() {
 
   // Sleep the thread for a bit
   FPlatformProcess::Sleep(0.005f);
+
+  // don't want to stop the thread
+  return false;
 }
 
 void URtspClientComponent::handle_rtp_packet(std::vector<uint8_t> &data) {
