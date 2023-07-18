@@ -33,7 +33,9 @@ This example contains a few components:
    runnable runs a bound function from the RtspClientComponent class which
    receives the raw data, parses it into jpeg frames, decompresses the jpeg
    frames, and then updates some mutex-protected data to inform the game thread
-   (RtspClientComponent::TickComponent) that new data is available.
+   (RtspClientComponent::TickComponent) that new data is available. This class
+   is also used to allow the FSocket::Connect (TCP connection from RTSP Client
+   to RTSP Server) to run without blocking the main / game thread.
 4. `M_Display` and `M_Display_Inst`: these assets in the Content/Materials
    directory are simple materials which render a texture parameter with optional
    configuration for the UV mapping of the texture. This material instance is
@@ -43,11 +45,16 @@ This example contains a few components:
    Plane static mesh component. On BeginPlay it creates a dynamic material
    instance of the M_Display_Inst which it stores a reference to so that it can
    dynamically update the texture parameter that the material is rendering. It
-   sets this material on the plane static mesh component. It also uses the
-   RtspClientComponent to connect to, setup, and start playing the RTSP stream
-   from the RTSP server. It binds an event to the OnFrameReceived event from the
-   RtspClientComponent and when it receives a message from that event, it sets
-   the new texture to be the dynamic material instance's texture parameter.
+   sets this material on the plane static mesh component. It binds an event to
+   the OnFrameReceived event from the RtspClientComponent and when it receives a
+   message from that event, it sets the new texture to be the dynamic material
+   instance's texture parameter.
+6. `W_RtspDisplay`: This user widget contains the UI (2D) for interacting with a
+   RtspClientComponent. It is configured by the `RtspDisplayMap`'s level
+   blueprint to be added as the UI to the viewport for the first player
+   controller and to control the RtspClientComponent of the RtspDisplay actor in
+   the level. It provides the UI (display image, URL textbox, and buttons for
+   connect, disconnect, play, and pause) for the RtspClientComponent.
 
 Image of the running example in the editor:
 
