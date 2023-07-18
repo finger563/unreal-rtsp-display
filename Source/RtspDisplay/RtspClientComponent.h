@@ -46,8 +46,20 @@ public:
 
   URtspClientComponent();
 
+  // Connect to the RTSP server using the address, port, and path that were
+  // previously set.
   UFUNCTION(BlueprintCallable, Category = "RTSP")
-  bool connect(FString rtsp_address, int rtsp_port = 8554, FString path = TEXT("/mjpeg/1"));
+  bool connect();
+
+  // Connect to the RTSP server using the specified URI. Parses the URI and
+  // overrides the previously set address, port, and path.
+  UFUNCTION(BlueprintCallable, Category = "RTSP")
+  bool connect_to_uri(FString uri);
+
+  // Connect to the RTSP server using the specified address, port, and path.
+  // Overrides the previously set address, port, and path.
+  UFUNCTION(BlueprintCallable, Category = "RTSP")
+  bool connect_to_address(FString rtsp_address, int rtsp_port = 8554, FString path = TEXT("/mjpeg/1"));
 
   UFUNCTION(BlueprintCallable, Category = "RTSP")
   void disconnect();
@@ -82,13 +94,13 @@ public:
   UPROPERTY(BlueprintAssignable, Category = "RTSP")
   FOnFrameReceived OnFrameReceived;
 
-  UPROPERTY(BlueprintReadOnly, Category = "RTSP")
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RTSP")
   FString Address;
 
-  UPROPERTY(BlueprintReadOnly, Category = "RTSP")
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RTSP")
   int Port = 8554;
 
-  UPROPERTY(BlueprintReadOnly, Category = "RTSP")
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RTSP")
   FString Path = TEXT("/mjpeg/1");
 
   UPROPERTY(BlueprintReadOnly, Category = "RTSP")
