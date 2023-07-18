@@ -1,7 +1,9 @@
 #include "RtspClientComponent.h"
 
+#include "Async/Async.h"
 #include "Common/TcpSocketBuilder.h"
 #include "Common/UdpSocketBuilder.h"
+#include "GenericPlatform/GenericPlatformHttp.h"
 #include "IImageWrapper.h"
 #include "IImageWrapperModule.h"
 #include "Interfaces/IPv4/IPv4Address.h"
@@ -117,7 +119,23 @@ std::string URtspClientComponent::send_request(const std::string& method, const 
   return response;
 }
 
-bool URtspClientComponent::connect(FString address, int port, FString path) {
+bool URtspClientComponent::connect() {
+  return connect_to_address(Address, Port, Path);
+}
+
+bool URtspClientComponent::connect_to_uri(FString uri) {
+  // parse the uri
+  auto address = FGenericPlatformHttp::GetUrlDomain(uri);
+  int port = 8554;
+  auto maybe_port = FGenericPlatformHttp::GetUrlPort(uri);
+  if (maybe_port.IsSet()) {
+    port = maybe_port.GetValue();
+  }
+  auto path = FGenericPlatformHttp::GetUrlPath(uri);
+  return connect_to_address(address, port, path);
+}
+
+bool URtspClientComponent::connect_to_address(FString address, int port, FString path) {
   if (IsConnected) {
     UE_LOG(LogTemp, Warning, TEXT("Already connected, disconnecting first"));
     disconnect();
@@ -161,6 +179,10 @@ void URtspClientComponent::disconnect() {
     connect_thread_->Stop();
     delete connect_thread_;
     connect_thread_ = nullptr;
+  }
+  if (!IsConnected) {
+    UE_LOG(LogTemp, Warning, TEXT("Not connected, nothing to disconnect"));
+    return;
   }
   // try to send the teardown request, but don't care if it fails
   teardown();
@@ -406,8 +428,11 @@ bool URtspClientComponent::connect_thread_func() {
   // update the state
   IsConnected = true;
 
-  // notify the listeners
-  OnConnected.Broadcast();
+  // can only broadcast events from the game thread, so use async with lambda
+  AsyncTask(ENamedThreads::GameThread, [this]() {
+    // notify the listeners
+    OnConnected.Broadcast();
+  });
 
   // send the OPTIONS request
   std::error_code ec;

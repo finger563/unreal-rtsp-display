@@ -2,12 +2,12 @@
 Example code for receiving video streams over RTSP using Unreal Engine FSockets
 and displaying them in real time.
 
-https://github.com/finger563/unreal-rtsp-display/assets/213467/05942919-d097-4142-9010-33f8de1883c2
+https://github.com/finger563/unreal-rtsp-display/assets/213467/64270d95-f223-43ef-885b-599e607d48b1
 
 When running this example, you will need to configure the address, port, and
 path of your RTSP server on the actor:
 
-<img height="300" alt="CleanShot 2023-07-08 at 10 52 16@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/6cf9ff23-65af-47e6-8260-601499a0ef68">
+![CleanShot 2023-07-18 at 13 42 36](https://github.com/finger563/unreal-rtsp-display/assets/213467/8884b601-5fa0-4b29-89db-1c271c8055cc)
 
 Note: this example currently only supports MJPEG streams over RTSP, which are
 parsed with the RtpJpegPacket class into JpegFrames. This example uses Unreal
@@ -33,7 +33,9 @@ This example contains a few components:
    runnable runs a bound function from the RtspClientComponent class which
    receives the raw data, parses it into jpeg frames, decompresses the jpeg
    frames, and then updates some mutex-protected data to inform the game thread
-   (RtspClientComponent::TickComponent) that new data is available.
+   (RtspClientComponent::TickComponent) that new data is available. This class
+   is also used to allow the FSocket::Connect (TCP connection from RTSP Client
+   to RTSP Server) to run without blocking the main / game thread.
 4. `M_Display` and `M_Display_Inst`: these assets in the Content/Materials
    directory are simple materials which render a texture parameter with optional
    configuration for the UV mapping of the texture. This material instance is
@@ -43,29 +45,44 @@ This example contains a few components:
    Plane static mesh component. On BeginPlay it creates a dynamic material
    instance of the M_Display_Inst which it stores a reference to so that it can
    dynamically update the texture parameter that the material is rendering. It
-   sets this material on the plane static mesh component. It also uses the
-   RtspClientComponent to connect to, setup, and start playing the RTSP stream
-   from the RTSP server. It binds an event to the OnFrameReceived event from the
-   RtspClientComponent and when it receives a message from that event, it sets
-   the new texture to be the dynamic material instance's texture parameter.
+   sets this material on the plane static mesh component. It binds an event to
+   the OnFrameReceived event from the RtspClientComponent and when it receives a
+   message from that event, it sets the new texture to be the dynamic material
+   instance's texture parameter.
+6. `W_RtspDisplay`: This user widget contains the UI (2D) for interacting with a
+   RtspClientComponent. It is configured by the `RtspDisplayMap`'s level
+   blueprint to be added as the UI to the viewport for the first player
+   controller and to control the RtspClientComponent of the RtspDisplay actor in
+   the level. It provides the UI (display image, URL textbox, and buttons for
+   connect, disconnect, play, and pause) for the RtspClientComponent.
 
 Image of the running example in the editor:
 
-<img width="1725" alt="CleanShot 2023-07-08 at 10 37 49@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/74a2898c-718e-422e-87f3-79f995188df8">
-
-Image showing the RTSP configuration parameters on the RtspDisplay blueprint actor:
-
-<img width="1723" alt="CleanShot 2023-07-08 at 10 38 20@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/7315797f-4fb3-4af4-9d50-0ffbdee99de2">
+Disconnected (With text box to write URI and connect button):
+![CleanShot 2023-07-18 at 13 40 12](https://github.com/finger563/unreal-rtsp-display/assets/213467/88722e5d-f8fa-4852-b55b-3ba9be8da057)
+Connected:
+![CleanShot 2023-07-18 at 13 40 27](https://github.com/finger563/unreal-rtsp-display/assets/213467/9271463d-55eb-47bc-aedc-0aea512df317)
+Playing:
+![CleanShot 2023-07-18 at 13 40 42](https://github.com/finger563/unreal-rtsp-display/assets/213467/885ee177-535e-4da9-a843-aa2342e79ee0)
 
 ### Details
 
 #### RtspDisplay Actor Blueprint
 
-![Event Graph](https://github.com/finger563/unreal-rtsp-display/assets/213467/98bf260f-38a5-4bc3-86e8-a43083ee8e93)
-<img width="1124" alt="CleanShot 2023-07-08 at 10 50 28@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/cfdbea49-971d-4ddd-84af-b28e0d09e3a5">
-![RtspDisplay::Connect](https://github.com/finger563/unreal-rtsp-display/assets/213467/561da1ba-39c8-4b65-a964-ef5668494ec2)
-
+![CleanShot 2023-07-18 at 13 44 33](https://github.com/finger563/unreal-rtsp-display/assets/213467/6d7109b6-fd43-46af-b526-889ab9237294)
 
 #### M_Display Material
 
 <img width="1242" alt="CleanShot 2023-07-08 at 10 51 50@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/656a5447-39db-4fcc-bb16-92a839dc4e41">
+
+#### RtspDisplay User Widget
+
+![CleanShot 2023-07-18 at 13 45 26](https://github.com/finger563/unreal-rtsp-display/assets/213467/ecab159c-0201-4ee0-8fdd-90ee3e997023)
+Note the image has been set with angle 180 and X scale of -1 so that it matches the camera image that I'm currently sending. May need to be changed for other streams depending on camera orientation.
+
+Its blueprint:
+![CleanShot 2023-07-18 at 13 48 23](https://github.com/finger563/unreal-rtsp-display/assets/213467/bbea4667-841b-4004-8afa-b12e4b667da2)
+
+#### Level Blueprint
+
+![CleanShot 2023-07-18 at 13 48 56](https://github.com/finger563/unreal-rtsp-display/assets/213467/c97d9954-a887-4773-8a3b-54104b102e31)
