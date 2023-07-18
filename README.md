@@ -2,7 +2,7 @@
 Example code for receiving video streams over RTSP using Unreal Engine FSockets
 and displaying them in real time.
 
-https://github.com/finger563/unreal-rtsp-display/assets/213467/05942919-d097-4142-9010-33f8de1883c2
+https://github.com/finger563/unreal-rtsp-display/assets/213467/64270d95-f223-43ef-885b-599e607d48b1
 
 When running this example, you will need to configure the address, port, and
 path of your RTSP server on the actor:
