@@ -7,7 +7,7 @@ https://github.com/finger563/unreal-rtsp-display/assets/213467/05942919-d097-414
 When running this example, you will need to configure the address, port, and
 path of your RTSP server on the actor:
 
-<img height="300" alt="CleanShot 2023-07-08 at 10 52 16@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/6cf9ff23-65af-47e6-8260-601499a0ef68">
+![CleanShot 2023-07-18 at 13 42 36](https://github.com/finger563/unreal-rtsp-display/assets/213467/8884b601-5fa0-4b29-89db-1c271c8055cc)
 
 Note: this example currently only supports MJPEG streams over RTSP, which are
 parsed with the RtpJpegPacket class into JpegFrames. This example uses Unreal
@@ -51,20 +51,31 @@ This example contains a few components:
 
 Image of the running example in the editor:
 
-<img width="1725" alt="CleanShot 2023-07-08 at 10 37 49@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/74a2898c-718e-422e-87f3-79f995188df8">
-
-Image showing the RTSP configuration parameters on the RtspDisplay blueprint actor:
-
-<img width="1723" alt="CleanShot 2023-07-08 at 10 38 20@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/7315797f-4fb3-4af4-9d50-0ffbdee99de2">
+Disconnected (With text box to write URI and connect button):
+![CleanShot 2023-07-18 at 13 40 12](https://github.com/finger563/unreal-rtsp-display/assets/213467/88722e5d-f8fa-4852-b55b-3ba9be8da057)
+Connected:
+![CleanShot 2023-07-18 at 13 40 27](https://github.com/finger563/unreal-rtsp-display/assets/213467/9271463d-55eb-47bc-aedc-0aea512df317)
+Playing:
+![CleanShot 2023-07-18 at 13 40 42](https://github.com/finger563/unreal-rtsp-display/assets/213467/885ee177-535e-4da9-a843-aa2342e79ee0)
 
 ### Details
 
 #### RtspDisplay Actor Blueprint
 
-<img width="914" alt="CleanShot 2023-07-08 at 10 49 45@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/ded25e0e-a05a-4c32-a547-aa5455a982c6">
-<img width="1124" alt="CleanShot 2023-07-08 at 10 50 28@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/cfdbea49-971d-4ddd-84af-b28e0d09e3a5">
-<img width="1530" alt="CleanShot 2023-07-08 at 10 51 26@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/d252003d-6533-4de3-b045-e030644470d9">
+![CleanShot 2023-07-18 at 13 44 33](https://github.com/finger563/unreal-rtsp-display/assets/213467/6d7109b6-fd43-46af-b526-889ab9237294)
 
 #### M_Display Material
 
 <img width="1242" alt="CleanShot 2023-07-08 at 10 51 50@2x" src="https://github.com/finger563/unreal-rtsp-display/assets/213467/656a5447-39db-4fcc-bb16-92a839dc4e41">
+
+#### RtspDisplay User Widget
+
+![CleanShot 2023-07-18 at 13 45 26](https://github.com/finger563/unreal-rtsp-display/assets/213467/ecab159c-0201-4ee0-8fdd-90ee3e997023)
+Note the image has been set with angle 180 and X scale of -1 so that it matches the camera image that I'm currently sending. May need to be changed for other streams depending on camera orientation.
+
+Its blueprint:
+![CleanShot 2023-07-18 at 13 48 23](https://github.com/finger563/unreal-rtsp-display/assets/213467/bbea4667-841b-4004-8afa-b12e4b667da2)
+
+#### Level Blueprint
+
+![CleanShot 2023-07-18 at 13 48 56](https://github.com/finger563/unreal-rtsp-display/assets/213467/c97d9954-a887-4773-8a3b-54104b102e31)
