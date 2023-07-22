@@ -97,7 +97,8 @@ Note: you will likely have to modify the `/Users/Shared/Epic\
 Games/UE_5.2/Engine/Extras/Android/SetupAndroid.command` file - possibly to
 point to the right `JAVA_HOME` directory. In my case I had to modify the
 JAVA_HOME export in the `SetupAndroid.command` file to point to
-`/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home`.
+`/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home` and had
+to install jdk8 specifically.
 
 You will need to set the environment variables (under `Android SDK`)
 appropriately, e.g.:
