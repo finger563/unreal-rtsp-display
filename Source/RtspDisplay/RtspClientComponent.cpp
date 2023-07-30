@@ -54,11 +54,11 @@ void URtspClientComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
   // create a texture
   auto texture = UTexture2D::CreateTransient(width, height, PF_B8G8R8A8);
   // lock the texture
-  uint8 *mip_data = static_cast<uint8 *>(texture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE));
+  uint8 *mip_data = static_cast<uint8 *>(texture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE));
   // copy the jpeg data into the texture
   std::copy(data.data(), data.data() + data.size(), mip_data);
   // unlock the texture
-  texture->PlatformData->Mips[0].BulkData.Unlock();
+  texture->GetPlatformData()->Mips[0].BulkData.Unlock();
   // update the texture
   texture->UpdateResource();
   // broadcast the texture
